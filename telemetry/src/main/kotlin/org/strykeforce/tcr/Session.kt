@@ -31,9 +31,9 @@ class Session {
 
     val client = HttpClient(CIO) {
         install(JsonFeature)
-        engine {
-            proxy = ProxyBuilder.http("http://192.168.1.52:9090/")
-        }
+//        engine {
+//            proxy = ProxyBuilder.http("http://192.168.1.52:9090/")
+//        }
     }
 
     val running = AtomicBoolean(false)
@@ -91,7 +91,7 @@ class Session {
 
     private suspend fun writeCsvHeader(subscriptionResponse: SubscriptionResponse) {
         val headers = subscriptionResponse.descriptions.map { it.toSlug() }
-        writeCsv("timestamp,${headers.joinToString()}")
+        writeCsv("timestamp,${headers.joinToString(separator = ",")}")
     }
 
     private suspend fun writeCsv(row: String) = withContext(Dispatchers.IO) {

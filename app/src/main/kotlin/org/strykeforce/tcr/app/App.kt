@@ -4,37 +4,21 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.strykeforce.nt.Trigger
-import org.strykeforce.tcr.Item
 import org.strykeforce.tcr.Session
-import org.strykeforce.tcr.SubscriptionRequest
+import org.strykeforce.tcr.readSubscriptionFromFile
 
 fun main() = runBlocking {
     val session = Session()
     val trigger = Trigger()
+    
 //    val inventory = session.inventory()
+//    val subscription = inventory.toSubscription()
+//    subscription.writeToFile("subscription.json")
 
-//    session.subscribe2(
-//        SubscriptionRequest(
-//            listOf(
-////                Item(0, "SELECTED_SENSOR_VELOCITY"),
-//                Item(0, "OUTPUT_VOLTAGE"),
-////                Item(0, "OUTPUT_PERCENTAGE"),
-//            )
-//        )
-//    )
 
-//    println(inventory)
-
+    val subscription = readSubscriptionFromFile("subscription.json")
     launch {
-        session.start(
-            SubscriptionRequest(
-                listOf(
-                    Item(0, "SELECTED_SENSOR_VELOCITY"),
-                    Item(0, "OUTPUT_VOLTAGE"),
-//                    Item(0, "OUTPUT_PERCENTAGE"),
-                )
-            )
-        )
+        session.start(subscription)
     }
 
     trigger.trigger()
