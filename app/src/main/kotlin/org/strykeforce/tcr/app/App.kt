@@ -4,13 +4,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.strykeforce.nt.Trigger
+import org.strykeforce.nt.createTrigger
 import org.strykeforce.tcr.Session
 import org.strykeforce.tcr.readSubscriptionFromFile
 
 fun main() = runBlocking {
     val session = Session()
-    val trigger = Trigger()
-    
+    val trigger = createTrigger()
 //    val inventory = session.inventory()
 //    val subscription = inventory.toSubscription()
 //    subscription.writeToFile("subscription.json")
@@ -22,6 +22,6 @@ fun main() = runBlocking {
     }
 
     trigger.trigger()
-    delay(5000)
+    delay(4000)
     session.shutdown()
 }
