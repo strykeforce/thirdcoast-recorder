@@ -1,4 +1,5 @@
 *.csv
+*.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos,gradle,intellij,kotlin
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,gradle,intellij,kotlin

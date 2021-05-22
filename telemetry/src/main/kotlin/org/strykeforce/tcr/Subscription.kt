@@ -1,6 +1,10 @@
 package org.strykeforce.tcr
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import java.io.File
 
 @Serializable
 data class Item(val itemId: Int, val measurementId: String)
@@ -12,3 +16,8 @@ data class SubscriptionRequest constructor(val type: String, val subscription: L
 
 @Serializable
 data class SubscriptionResponse(val type: String, val timestamp: Long, val descriptions: List<String>)
+
+fun readSubscriptionFromFile(pathname: String) = Json.decodeFromString<SubscriptionRequest>(File(pathname).readText())
+
+fun SubscriptionRequest.writeToFile(pathname: String) =
+    File(pathname).writeText(Json { prettyPrint = true }.encodeToString(this))

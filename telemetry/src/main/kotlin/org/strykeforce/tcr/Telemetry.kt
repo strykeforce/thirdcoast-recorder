@@ -8,5 +8,5 @@ data class Telemetry(var timestamp: Long, val data: List<Double>) {
         timestamp -= offset
     }
 
-    fun toCsv() = "$timestamp,${data.joinToString()}"
+    fun toCsv() = "$timestamp,${data.joinToString(separator = ",")}"
 }
