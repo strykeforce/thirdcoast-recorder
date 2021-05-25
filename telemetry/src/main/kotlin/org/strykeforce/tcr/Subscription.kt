@@ -1,5 +1,7 @@
 package org.strykeforce.tcr
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -17,7 +19,9 @@ data class SubscriptionRequest constructor(val type: String, val subscription: L
 @Serializable
 data class SubscriptionResponse(val type: String, val timestamp: Long, val descriptions: List<String>)
 
-fun readSubscriptionFromFile(pathname: String) = Json.decodeFromString<SubscriptionRequest>(File(pathname).readText())
+suspend fun readSubscriptionFromFile(file: File) = withContext(Dispatchers.IO) {
+    Json.decodeFromString<SubscriptionRequest>(file.readText())
+}
 
-fun SubscriptionRequest.writeToFile(pathname: String) =
-    File(pathname).writeText(Json { prettyPrint = true }.encodeToString(this))
+fun SubscriptionRequest.writeToFile(file: File) = file.writeText(Json { prettyPrint = true }.encodeToString(this))
+fun SubscriptionRequest.asJson() = Json { prettyPrint = true }.encodeToString(this)

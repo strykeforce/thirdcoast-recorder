@@ -1,6 +1,10 @@
 package org.strykeforce.tcr
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+
+private val lineSep = System.lineSeparator()
 
 @Serializable
 data class Measurable(val id: Int, val type: String, val description: String)
@@ -23,4 +27,8 @@ data class Inventory(val items: List<Measurable>, val measures: List<MeasurableM
                 subscriptionItems += Item(measurable.id, measure.id)
         return SubscriptionRequest(subscriptionItems)
     }
+
+    fun asJson() = Json { prettyPrint = true }.encodeToString(this)
+    fun asCsv(): String =
+        toSubscription().subscription.map { "${it.itemId},${it.measurementId}$lineSep" }.joinToString("")
 }
