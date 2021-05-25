@@ -1,8 +1,6 @@
 package org.strykeforce.tcr
 
 import io.ktor.client.*
-import io.ktor.client.engine.*
-import io.ktor.client.engine.ProxyBuilder.http
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.json.*
 import io.ktor.client.request.*
@@ -27,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 private val logger = KotlinLogging.logger {}
 
-class Session {
+class Session(val address: String = "10.27.67.2", val port: Int = 5800) {
 
     val client = HttpClient(CIO) {
         install(JsonFeature)
@@ -41,28 +39,29 @@ class Session {
     val outputWriter =
         File("tcr-${Date().let { SimpleDateFormat("MMdd-HHmmss").format(it) }}.csv").bufferedWriter()
 
-    suspend fun inventory(): Inventory = client.get("http://10.27.67.2:5800/v1/grapher/inventory")
-
-    suspend fun subscribe2(subscriptionRequest: SubscriptionRequest) {
-        val response: String = client.post("http://10.27.67.2:5800/v1/grapher/subscription") {
-            contentType(ContentType.Application.Json)
-            body = subscriptionRequest
-        }
-
-        logger.debug { response }
+    suspend fun inventory(): Inventory {
+        val endpoint = "http://$address:$port/v1/grapher/inventory"
+        logger.debug { "GET inventory from $endpoint" }
+        return client.get(endpoint)
     }
 
-    suspend fun subscribe(subscriptionRequest: SubscriptionRequest): SubscriptionResponse =
-        client.post("http://10.27.67.2:5800/v1/grapher/subscription") {
+    suspend fun subscribe(subscriptionRequest: SubscriptionRequest): SubscriptionResponse {
+        val endpoint = "http://$address:$port/v1/grapher/subscription"
+        logger.debug { "POST subscription to $endpoint" }
+        return client.post(endpoint) {
             contentType(ContentType.Application.Json)
             body = subscriptionRequest
         }
+    }
 
     suspend fun start(subscriptionRequest: SubscriptionRequest) {
         if (!running.compareAndSet(false, true))
             throw IllegalStateException("session is already running")
 
+        logger.info { subscriptionRequest }
         val response = subscribe(subscriptionRequest)
+        logger.debug { response }
+
         writeCsvHeader(response)
 
         telemetryFlow()
@@ -74,7 +73,7 @@ class Session {
         if (!running.compareAndSet(true, false))
             throw IllegalStateException("session is not running")
 
-        client.delete<Unit>("http://10.27.67.2:5800/v1/grapher/subscription")
+        client.delete<Unit>("http://$address:$port/v1/grapher/subscription")
         closeOutputWriter()
         logger.info { "shutdown session" }
     }
