@@ -10,7 +10,7 @@ import java.util.concurrent.CountDownLatch
 
 private val logger = KotlinLogging.logger {}
 private const val entryName = "Trigger"
-private const val triggerDelay = 0L
+private const val triggerDelay = 100L
 
 suspend fun createTrigger(): Trigger = withContext(Dispatchers.IO) {
     Trigger()

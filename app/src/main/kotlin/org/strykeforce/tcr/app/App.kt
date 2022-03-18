@@ -90,17 +90,15 @@ class Trigger : CliktCommand(
     override fun run() = runBlocking {
         val trigger = createTrigger()
         val subscription = readSubscriptionFromFile(subscription)
-        println(subscription)
         launch {
-            println("launch")
+            println("start capture")
             session.start(subscription)
         }
-
         delay(2000)
         trigger.trigger()
         println("trigger")
         delay(duration)
-        println("shutdown")
+        println("stop capture")
         session.shutdown()
 
     }
