@@ -25,7 +25,7 @@ version-resolver:
       - "patch"
   default: patch
 template: |
-  Installation and usage documentation is at: https://strykeforce.github.io/deadeye/.
+  Installation and usage documentation is at: https://github.com/strykeforce/thirdcoast-recorder.
 
   ## Changes
 
