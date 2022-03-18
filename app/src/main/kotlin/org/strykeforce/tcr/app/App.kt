@@ -11,9 +11,7 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.long
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.strykeforce.nt.createTrigger
 import org.strykeforce.tcr.Session
 import org.strykeforce.tcr.asJson
@@ -91,20 +89,54 @@ class Trigger : CliktCommand(
         val trigger = createTrigger()
         val subscription = readSubscriptionFromFile(subscription)
         launch {
-            println("start capture")
+            println("started capture with $duration msec duration")
             session.start(subscription)
         }
         delay(2000)
         trigger.trigger()
         println("trigger")
         delay(duration)
-        println("stop capture")
+        println("stopped capture")
         session.shutdown()
 
     }
 }
 
-fun main(args: Array<String>) = Tcr().subcommands(Inventory(), Subscription(), Trigger()).main(args)
+
+class Capture : CliktCommand(
+    help = """
+    Start capture and run until key is pressed.
+    
+    Subscription will be read from "$SUBSCRIPTION_DEFAULT" by default. Use the
+    "subscription" command to create a subscription JSON file for editing.
+    
+    Telemetry output is written to "tcr-<TIMESTAMP>.csv".
+"""
+) {
+    val session by requireObject<Session>()
+    val subscription by option("-f", "--subscription-from", help = "Specify subscription JSON file.", metavar = "JSON")
+        .file()
+        .default(File(SUBSCRIPTION_DEFAULT))
+        .check(lazyMessage = { "\"${it.name}\" does not exist." }) { it.exists() }
+
+    override fun run(): Unit = runBlocking {
+        val subscription = readSubscriptionFromFile(subscription)
+        launch {
+            println("starting capture, press enter key to stop capture")
+            session.start(subscription)
+        }
+        delay(2000)
+
+        withContext(Dispatchers.IO) {
+            readLine()
+        }
+
+        println("stopped capture")
+        session.shutdown()
+    }
+}
+
+fun main(args: Array<String>) = Tcr().subcommands(Inventory(), Subscription(), Capture(), Trigger()).main(args)
 
 ////    val inventory = session.inventory()
 ////    val subscription = inventory.toSubscription()
