@@ -3,9 +3,22 @@
 A CLI tool to capture Third Coast telemetry to CSV files. An example of collected telemetry data is in this
 Jupyter [notebook](https://github.com/jhh/motion/blob/main/notebooks/trajectory/figure-8.ipynb).
 
-## Usage
+## Installation
+
+For this example, we'll build and install `tcr` in the application's Gradle `build` directory. You can then run `tcr` by
+specifying the full relative path.
 
 ```shell
+$ # from the repository's top-level directory
+$ ./gradlew install
+$ ./app/build/install/tcr/bin/tcr`
+```
+
+If desired a installable distribution can be build by running the Gradle `distTar` or `distZip` task.
+
+## Usage
+
+```text
 $ ./app/build/install/tcr/bin/tcr -h
 Usage: tcr [OPTIONS] COMMAND [ARGS]...
 
@@ -25,7 +38,7 @@ Commands:
 ```text
 Usage: tcr capture [OPTIONS]
 
-  Start capture and run until key is pressed.
+  Start capture and run until the enter key is pressed.
 
   Subscription will be read from "subscription.json" by default. Use the
   "subscription" command to create a subscription JSON file for editing.

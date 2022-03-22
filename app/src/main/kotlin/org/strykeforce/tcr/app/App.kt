@@ -105,7 +105,7 @@ class Trigger : CliktCommand(
 
 class Capture : CliktCommand(
     help = """
-    Start capture and run until key is pressed.
+    Start capture and run until the enter key is pressed.
     
     Subscription will be read from "$SUBSCRIPTION_DEFAULT" by default. Use the
     "subscription" command to create a subscription JSON file for editing.
