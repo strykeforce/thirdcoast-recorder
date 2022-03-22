@@ -30,6 +30,7 @@ Options:
 Commands:
   inventory     Print inventory to stdout.
   subscription  Print subscription template to stdout.
+  capture       Start capture and run until the enter key is pressed.
   trigger       Trigger command and capture for DURATION milliseconds.
 ```
 
